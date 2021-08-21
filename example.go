@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/Yapcheekian/httpclient-go/gohttp"
 )
@@ -16,18 +17,19 @@ type User struct {
 	LastName  string `json:"last_name"`
 }
 
-func getGithubClient() gohttp.HttpClient {
-	client := gohttp.New()
+func getGithubClient() gohttp.Client {
+	builder := gohttp.NewBuilder()
 
-	client.DisableTimeouts(true)
-
-	// client.SetConnectionTimeout(2 * time.Second)
-	// client.SetMaxIdleConnections(2)
-	// client.SetRequestTimeout(5 * time.Second)
-
+	// builder.DisableTimeouts(true)
 	commonHeader := make(http.Header)
 	commonHeader.Set("Authorization", "Bearer ABC")
-	client.SetHeader(commonHeader)
+
+	client := builder.
+		SetConnectionTimeout(2 * time.Second).
+		SetMaxIdleConnections(2).
+		SetRequestTimeout(5 * time.Second).
+		SetHeader(commonHeader).
+		Build()
 
 	return client
 }
