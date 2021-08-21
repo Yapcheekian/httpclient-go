@@ -1,34 +1,29 @@
 package gohttp
 
 import (
-	"net"
 	"net/http"
 	"time"
 )
 
 type httpClient struct {
-	client  *http.Client
-	Headers http.Header
+	client             *http.Client
+	Headers            http.Header
+	maxIdleConnections int
+	connectionTimeout  time.Duration
+	requestTimeout     time.Duration
+	disableTimeouts    bool
 }
 
 func New() HttpClient {
-	client := http.Client{
-		Transport: &http.Transport{
-			MaxIdleConnsPerHost:   5,
-			ResponseHeaderTimeout: 5 * time.Second,
-			DialContext: (&net.Dialer{
-				Timeout: 1 * time.Second,
-			}).DialContext,
-		},
-	}
-
-	return &httpClient{
-		client: &client,
-	}
+	return &httpClient{}
 }
 
 type HttpClient interface {
 	SetHeader(headers http.Header)
+	SetConnectionTimeout(timeout time.Duration)
+	SetMaxIdleConnections(conn int)
+	SetRequestTimeout(timeout time.Duration)
+	DisableTimeouts(b bool)
 
 	Get(url string, headers http.Header) (*http.Response, error)
 	Post(url string, headers http.Header, body interface{}) (*http.Response, error)
@@ -39,6 +34,22 @@ type HttpClient interface {
 
 func (c *httpClient) SetHeader(headers http.Header) {
 	c.Headers = headers
+}
+
+func (c *httpClient) SetConnectionTimeout(timeout time.Duration) {
+	c.connectionTimeout = timeout
+}
+
+func (c *httpClient) SetMaxIdleConnections(conn int) {
+	c.maxIdleConnections = conn
+}
+
+func (c *httpClient) SetRequestTimeout(timeout time.Duration) {
+	c.requestTimeout = timeout
+}
+
+func (c *httpClient) DisableTimeouts(b bool) {
+	c.disableTimeouts = b
 }
 
 func (c *httpClient) Get(url string, headers http.Header) (*http.Response, error) {

@@ -19,6 +19,12 @@ type User struct {
 func getGithubClient() gohttp.HttpClient {
 	client := gohttp.New()
 
+	client.DisableTimeouts(true)
+
+	// client.SetConnectionTimeout(2 * time.Second)
+	// client.SetMaxIdleConnections(2)
+	// client.SetRequestTimeout(5 * time.Second)
+
 	commonHeader := make(http.Header)
 	commonHeader.Set("Authorization", "Bearer ABC")
 	client.SetHeader(commonHeader)
