@@ -50,7 +50,9 @@ func getUrl() {
 		panic(err)
 	}
 
-	fmt.Println(resp.StatusCode)
+	fmt.Println(resp.StatusCode())
+
+	fmt.Println(resp.String())
 }
 
 func createUser(user User) {
@@ -60,5 +62,5 @@ func createUser(user User) {
 		panic(err)
 	}
 
-	fmt.Println(resp.StatusCode)
+	fmt.Println(resp.StatusCode())
 }
