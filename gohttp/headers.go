@@ -24,5 +24,12 @@ func (c *httpClient) getRequestHeaders(requestHeader http.Header) http.Header {
 		}
 	}
 
+	if c.builder.userAgent != "" {
+		if result.Get("user-agent") != "" {
+			return result
+		}
+		result.Set("user-agent", c.builder.userAgent)
+	}
+
 	return result
 }
