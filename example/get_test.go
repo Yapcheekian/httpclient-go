@@ -7,23 +7,23 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Yapcheekian/httpclient-go/gohttp"
+	gohttpmock "github.com/Yapcheekian/httpclient-go/gohttp_mock"
 )
 
 func TestMain(m *testing.M) {
-	gohttp.StartMockServer()
+	gohttpmock.StartMockServer()
 	os.Exit(m.Run())
 }
 
 func TestGetEndpoints(t *testing.T) {
 	t.Run("TestErrorFetchingFromGithub", func(t *testing.T) {
-		mock := gohttp.Mock{
+		mock := gohttpmock.Mock{
 			Method: http.MethodGet,
 			Url:    "https://api.github.com",
 			Error:  errors.New("timeout getting github endpoints"),
 		}
-		gohttp.FlushMocks()
-		gohttp.AddMock(mock)
+		gohttpmock.DeleteMocks()
+		gohttpmock.AddMock(mock)
 
 		endpoints, err := GetEndpoints()
 
@@ -41,15 +41,15 @@ func TestGetEndpoints(t *testing.T) {
 	})
 
 	t.Run("TestErrorUnmarshalResponseBody", func(t *testing.T) {
-		mock := gohttp.Mock{
+		mock := gohttpmock.Mock{
 			Method:             http.MethodGet,
 			Url:                "https://api.github.com",
 			ResponseStatusCode: http.StatusOK,
 			ResponseBody:       `{"current_user_url": 123}`,
 		}
 
-		gohttp.FlushMocks()
-		gohttp.AddMock(mock)
+		gohttpmock.DeleteMocks()
+		gohttpmock.AddMock(mock)
 
 		endpoints, err := GetEndpoints()
 
@@ -67,15 +67,15 @@ func TestGetEndpoints(t *testing.T) {
 	})
 
 	t.Run("TestNoError", func(t *testing.T) {
-		mock := gohttp.Mock{
+		mock := gohttpmock.Mock{
 			Method:             http.MethodGet,
 			Url:                "https://api.github.com",
 			ResponseStatusCode: http.StatusOK,
 			ResponseBody:       `{"current_user_url": "https://api.github.com/user"}`,
 		}
 
-		gohttp.FlushMocks()
-		gohttp.AddMock(mock)
+		gohttpmock.DeleteMocks()
+		gohttpmock.AddMock(mock)
 
 		endpoints, err := GetEndpoints()
 

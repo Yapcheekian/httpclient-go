@@ -6,12 +6,12 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/Yapcheekian/httpclient-go/gohttp"
+	gohttpmock "github.com/Yapcheekian/httpclient-go/gohttp_mock"
 )
 
 func TestCreateRepo(t *testing.T) {
 	t.Run("timeout from Github", func(t *testing.T) {
-		gohttp.FlushMocks()
+		gohttpmock.DeleteMocks()
 
 		repository := Repository{
 			Name:    "test-repo",
@@ -20,7 +20,7 @@ func TestCreateRepo(t *testing.T) {
 
 		requestBody, _ := json.Marshal(repository)
 
-		mock := gohttp.Mock{
+		mock := gohttpmock.Mock{
 			Method:      http.MethodPost,
 			Url:         "https://api.github.com/user/repos",
 			RequestBody: string(requestBody),
@@ -28,7 +28,7 @@ func TestCreateRepo(t *testing.T) {
 			Error: errors.New("timeout getting github endpoints"),
 		}
 
-		gohttp.AddMock(mock)
+		gohttpmock.AddMock(mock)
 
 		repo, err := CreateRepo(repository)
 
@@ -46,7 +46,7 @@ func TestCreateRepo(t *testing.T) {
 	})
 
 	t.Run("no error", func(t *testing.T) {
-		gohttp.FlushMocks()
+		gohttpmock.DeleteMocks()
 
 		repository := Repository{
 			Name:    "test-repo",
@@ -55,7 +55,7 @@ func TestCreateRepo(t *testing.T) {
 
 		requestBody, _ := json.Marshal(repository)
 
-		mock := gohttp.Mock{
+		mock := gohttpmock.Mock{
 			Method:      http.MethodPost,
 			Url:         "https://api.github.com/user/repos",
 			RequestBody: string(requestBody),
@@ -64,7 +64,7 @@ func TestCreateRepo(t *testing.T) {
 			ResponseBody:       `{"id": 123, "name": "test-repo"}`,
 		}
 
-		gohttp.AddMock(mock)
+		gohttpmock.AddMock(mock)
 
 		repo, err := CreateRepo(repository)
 

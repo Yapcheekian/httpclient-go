@@ -1,4 +1,4 @@
-package gohttp
+package gohttpmock
 
 import (
 	"crypto/md5"
@@ -35,7 +35,7 @@ func StopMockServer() {
 	mockUpServer.enabled = false
 }
 
-func FlushMocks() {
+func DeleteMocks() {
 	mockUpServer.serverMutex.Lock()
 	defer mockUpServer.serverMutex.Unlock()
 
@@ -70,11 +70,11 @@ func (m *mockServer) cleanBody(body string) string {
 	return body
 }
 
-func (m *mockServer) getMock(method, url, body string) *Mock {
-	if !m.enabled {
+func GetMock(method, url, body string) *Mock {
+	if !mockUpServer.enabled {
 		return nil
 	}
-	if mock := m.mocks[m.getMockKey(method, url, body)]; mock != nil {
+	if mock := mockUpServer.mocks[mockUpServer.getMockKey(method, url, body)]; mock != nil {
 		return mock
 	}
 
