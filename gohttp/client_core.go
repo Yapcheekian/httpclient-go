@@ -10,6 +10,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/Yapcheekian/httpclient-go/gomime"
 )
 
 const (
@@ -24,9 +26,9 @@ func (c *httpClient) getRequestBody(contentType string, body interface{}) ([]byt
 	}
 
 	switch strings.ToLower(contentType) {
-	case "application/json":
+	case gomime.ContentTypeJson:
 		return json.Marshal(body)
-	case "application/xml":
+	case gomime.ContentTypeXml:
 		return xml.Marshal(body)
 	default:
 		return json.Marshal(body)

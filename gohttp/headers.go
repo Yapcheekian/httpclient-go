@@ -1,6 +1,10 @@
 package gohttp
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/Yapcheekian/httpclient-go/gomime"
+)
 
 func getHeaders(headers ...http.Header) http.Header {
 	if len(headers) > 0 {
@@ -25,10 +29,10 @@ func (c *httpClient) getRequestHeaders(requestHeader http.Header) http.Header {
 	}
 
 	if c.builder.userAgent != "" {
-		if result.Get("user-agent") != "" {
+		if result.Get(gomime.HeaderUserAgent) != "" {
 			return result
 		}
-		result.Set("user-agent", c.builder.userAgent)
+		result.Set(gomime.HeaderUserAgent, c.builder.userAgent)
 	}
 
 	return result
