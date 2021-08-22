@@ -3,14 +3,16 @@ package gohttpmock
 import (
 	"crypto/md5"
 	"encoding/hex"
-	"errors"
 	"strings"
 	"sync"
+
+	"github.com/Yapcheekian/httpclient-go/core"
 )
 
 var (
-	mockUpServer = mockServer{
-		mocks: make(map[string]*Mock),
+	MockUpServer = mockServer{
+		mocks:      make(map[string]*Mock),
+		httpClient: &httpClientMock{},
 	}
 )
 
@@ -18,36 +20,38 @@ type mockServer struct {
 	enabled     bool
 	serverMutex sync.Mutex
 
+	httpClient core.HttpClient
+
 	mocks map[string]*Mock
 }
 
-func StartMockServer() {
-	mockUpServer.serverMutex.Lock()
-	defer mockUpServer.serverMutex.Unlock()
+func (m *mockServer) Start() {
+	m.serverMutex.Lock()
+	defer m.serverMutex.Unlock()
 
-	mockUpServer.enabled = true
+	m.enabled = true
 }
 
-func StopMockServer() {
-	mockUpServer.serverMutex.Lock()
-	defer mockUpServer.serverMutex.Unlock()
+func (m *mockServer) Stop() {
+	m.serverMutex.Lock()
+	defer m.serverMutex.Unlock()
 
-	mockUpServer.enabled = false
+	m.enabled = false
 }
 
-func DeleteMocks() {
-	mockUpServer.serverMutex.Lock()
-	defer mockUpServer.serverMutex.Unlock()
+func (m *mockServer) DeleteMocks() {
+	m.serverMutex.Lock()
+	defer m.serverMutex.Unlock()
 
-	mockUpServer.mocks = make(map[string]*Mock)
+	m.mocks = make(map[string]*Mock)
 }
 
-func AddMock(mock Mock) {
-	mockUpServer.serverMutex.Lock()
-	defer mockUpServer.serverMutex.Unlock()
+func (m *mockServer) AddMock(mock Mock) {
+	m.serverMutex.Lock()
+	defer m.serverMutex.Unlock()
 
-	key := mockUpServer.getMockKey(mock.Method, mock.Url, mock.RequestBody)
-	mockUpServer.mocks[key] = &mock
+	key := m.getMockKey(mock.Method, mock.Url, mock.RequestBody)
+	m.mocks[key] = &mock
 }
 
 func (m *mockServer) getMockKey(method, url, body string) string {
@@ -70,17 +74,10 @@ func (m *mockServer) cleanBody(body string) string {
 	return body
 }
 
-func GetMock(method, url, body string) *Mock {
-	if !mockUpServer.enabled {
-		return nil
-	}
-	if mock := mockUpServer.mocks[mockUpServer.getMockKey(method, url, body)]; mock != nil {
-		return mock
-	}
+func (m *mockServer) IsMockServerEnabled() bool {
+	return m.enabled
+}
 
-	mock := Mock{
-		Error: errors.New("no mock matching"),
-	}
-
-	return &mock
+func (m *mockServer) GetMockedClient() core.HttpClient {
+	return m.httpClient
 }

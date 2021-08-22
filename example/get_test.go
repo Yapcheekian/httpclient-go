@@ -11,7 +11,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	gohttpmock.StartMockServer()
+	gohttpmock.MockUpServer.Start()
 	os.Exit(m.Run())
 }
 
@@ -22,8 +22,8 @@ func TestGetEndpoints(t *testing.T) {
 			Url:    "https://api.github.com",
 			Error:  errors.New("timeout getting github endpoints"),
 		}
-		gohttpmock.DeleteMocks()
-		gohttpmock.AddMock(mock)
+		gohttpmock.MockUpServer.DeleteMocks()
+		gohttpmock.MockUpServer.AddMock(mock)
 
 		endpoints, err := GetEndpoints()
 
@@ -48,8 +48,8 @@ func TestGetEndpoints(t *testing.T) {
 			ResponseBody:       `{"current_user_url": 123}`,
 		}
 
-		gohttpmock.DeleteMocks()
-		gohttpmock.AddMock(mock)
+		gohttpmock.MockUpServer.DeleteMocks()
+		gohttpmock.MockUpServer.AddMock(mock)
 
 		endpoints, err := GetEndpoints()
 
@@ -74,8 +74,8 @@ func TestGetEndpoints(t *testing.T) {
 			ResponseBody:       `{"current_user_url": "https://api.github.com/user"}`,
 		}
 
-		gohttpmock.DeleteMocks()
-		gohttpmock.AddMock(mock)
+		gohttpmock.MockUpServer.DeleteMocks()
+		gohttpmock.MockUpServer.AddMock(mock)
 
 		endpoints, err := GetEndpoints()
 

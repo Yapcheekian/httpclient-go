@@ -11,7 +11,7 @@ import (
 
 func TestCreateRepo(t *testing.T) {
 	t.Run("timeout from Github", func(t *testing.T) {
-		gohttpmock.DeleteMocks()
+		gohttpmock.MockUpServer.DeleteMocks()
 
 		repository := Repository{
 			Name:    "test-repo",
@@ -28,7 +28,7 @@ func TestCreateRepo(t *testing.T) {
 			Error: errors.New("timeout getting github endpoints"),
 		}
 
-		gohttpmock.AddMock(mock)
+		gohttpmock.MockUpServer.AddMock(mock)
 
 		repo, err := CreateRepo(repository)
 
@@ -46,7 +46,7 @@ func TestCreateRepo(t *testing.T) {
 	})
 
 	t.Run("no error", func(t *testing.T) {
-		gohttpmock.DeleteMocks()
+		gohttpmock.MockUpServer.DeleteMocks()
 
 		repository := Repository{
 			Name:    "test-repo",
@@ -64,7 +64,7 @@ func TestCreateRepo(t *testing.T) {
 			ResponseBody:       `{"id": 123, "name": "test-repo"}`,
 		}
 
-		gohttpmock.AddMock(mock)
+		gohttpmock.MockUpServer.AddMock(mock)
 
 		repo, err := CreateRepo(repository)
 
