@@ -17,7 +17,7 @@ type Endpoints struct {
 }
 
 func GetEndpoints() (*Endpoints, error) {
-	resp, err := httpClient.Get("https://api.github.com", nil)
+	resp, err := httpClient.Get("https://api.github.com")
 
 	if err != nil {
 		return nil, err
