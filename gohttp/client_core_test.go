@@ -6,11 +6,13 @@ import (
 )
 
 func TestGetRequestHeader(t *testing.T) {
-	client := httpClient{}
+	client := httpClient{
+		builder: &clientBuilder{},
+	}
 	commonHeaders := make(http.Header)
 	commonHeaders.Set("content-type", "application/json")
 	commonHeaders.Set("user-agent", "test-agent")
-	client.builder.SetHeader(commonHeaders)
+	client.builder.headers = commonHeaders
 
 	requestHeaders := make(http.Header)
 	requestHeaders.Set("x-request-id", "ABC-123")
