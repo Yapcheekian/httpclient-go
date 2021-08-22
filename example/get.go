@@ -31,7 +31,7 @@ func GetEndpoints() (*Endpoints, error) {
 	var endpoints Endpoints
 
 	if err := resp.UnmarshalJson(&endpoints); err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	fmt.Println(endpoints.CurrentUserUrl)
